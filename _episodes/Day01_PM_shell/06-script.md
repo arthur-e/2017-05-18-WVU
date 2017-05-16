@@ -332,6 +332,51 @@ what they discover about their data and their workflow with one call to `history
 and a bit of editing to clean up the output
 and save it as a shell script.
 
+## Application: Downloading data from a list of sites
+
+### The `while read` construction
+
+The `read` function reads values from `stdin` and assigns them to values.
+For example, run `read x y z`, press <ENTER>, then type 3 4 5, and hit <ENTER> again.
+Nothing is returned, but if you then do `echo $x`, you should see it was assigned the value `5`.
+
+Note that `read` treats whitespace as its default separator, but will only read as many variables as you request.
+For example, repeat the above, but enter `3 4 5 6 7` instead of just `3 4 5`.
+Now examine the values of `$x`, `$y`, and `$z`.
+
+A single invocation of `read` will read a single line.
+To read multiple lines, you have to call `read` as many times as there are lines in your input.
+
+This is why `read` is particularly useful when combined with the `while` loop.
+Whereas a `for` loop iterates over objects, a `while` loop iterates indefinitely as long as a condition is met or a program can execute.
+
+Combining these two commands gives the following construction, which allows looping over the contents of a file:
+
+~~~
+while read <var1> <var2> ... <varn>; do
+    <do stuff with $var1 $var2 ... $varn>
+done < input_file
+~~~
+{: .bash}
+
+Effectively, this will keep calling the `read` command and `<do stuff>` blocks _until_ the first time the `read` command fails, which will happen when there are no more lines in `input_file`.
+
+For example, create a file `superlatives.txt` that looks like this:
+
+~~~
+apples oranges
+fruits veggies
+linux everything
+~~~
+
+...and then execute the following loop:
+
+~~~
+while read thing1 thing2; do echo $thing1 'better than' $thing2; done < superlatives.txt
+~~~
+
+Now, using this framework combined with everything else we've done so far, write a script that reads latitude and longitude coordinates from a file and downloads their data into a respective file.
+
 ## Nelle's Pipeline: Creating a Script
 
 An off-hand comment from her supervisor has made Nelle realize that
